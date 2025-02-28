@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: SupervisorAPI
+  version: 1.0.0
+  description: Supervisor agent to analyze feedback and improve agent performance
+
+paths:
+  /GetLessonsLearnedFromPastRuns:
+    get:
+      operationId: GetLessonsLearnedFromPastRuns
+      summary: Retrieve lessons learned from user feedback and trace table
+      description: Analyzes user feedback and execution traces to extract lessons learned about agent orchestration and function/tool calling
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  body:
+                    type: string
+                    description: List of lessons learned in bullet point format
+                example:
+                  body: "- when creating a SQL query that requires functions, ensure you have the correct Athena function names\n- when calling the data scientist agent, ensure you provide the ml dataset location"
+        '400':
+          description: Error response
+        '500':
+          description: Internal server error

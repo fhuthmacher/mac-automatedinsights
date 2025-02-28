@@ -1,0 +1,10 @@
+boto3==1.36.2
+sagemaker
+pandas
+python-dotenv
+opensearch-py
+autogluon
+pydantic
+mlflow==2.16.2
+sagemaker-mlflow
+sagemaker_studio

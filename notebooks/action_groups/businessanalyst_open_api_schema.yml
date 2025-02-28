@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: BusinessAnalystAPI
+  version: 1.0.0
+  description: Business Analyst API for database analysis and ML dataset preparation
+
+paths:
+  /GetDatabaseSchema:
+    post:
+      operationId: GetDatabaseSchema
+      summary: Retrieve the SQL database schema from S3
+      description: Gets the database schema definition files from the metadata/sql_table_definition path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - AthenaDatabase
+              properties:
+                AthenaDatabase:
+                  type: string
+                  description: The Athena database name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    table_name:
+                      type: string
+                    columns:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          type:
+                            type: string
+
+  /GetUseCases:
+    post:
+      operationId: GetUseCases
+      summary: Retrieve available AI/ML use cases from S3
+      description: Gets the use case definitions from metadata/use_cases/use_case_details.jsonl
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Name of the use case
+                    description:
+                      type: string
+                      description: Detailed description of the use case
+                    required_columns:
+                      type: array
+                      items:
+                        type: string
+                      description: Required columns for this use case
+
+  /ExecuteQuery:
+    post:
+      operationId: ExecuteQuery
+      summary: Execute an Athena query, save results, and return samples
+      description: Executes a query, saves full results to S3 if use case provided, and returns sample data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - AthenaDatabase
+                - Query
+              properties:
+                AthenaDatabase:
+                  type: string
+                  description: The Athena database name
+                Query:
+                  type: string
+                  description: The SQL query to execute
+                UseCaseName:
+                  type: string
+                  description: Optional use case name to save full results
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [SUCCEEDED, FAILED, CANCELLED, ERROR]
+                  total_rows:
+                    type: integer
+                    description: Total number of rows in the full result
+                  total_columns:
+                    type: integer
+                    description: Total number of columns
+                  columns:
+                    type: array
+                    items:
+                      type: string
+                    description: List of column names
+                  sample_data:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                    description: Sample rows from the query results
+                  dataset_location:
+                    type: string
+                    description: S3 location of saved dataset (if use case provided)
+                  error:
+                    type: string
+                    description: Detailed error message if query failed
+
+  /SaveDataset:
+    post:
+      operationId: SaveDataset
+      summary: Save a dataset to S3
+      description: Saves the provided dataset to S3 and returns its location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - UseCaseName
+                - Data
+              properties:
+                UseCaseName:
+                  type: string
+                  description: Name of the use case for the dataset
+                Data:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+                  description: Dataset to save as array of records
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  location:
+                    type: string
+                    description: S3 location where the dataset was saved
+
+        '400':
+          description: Bad request error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message explaining the bad request
+                  
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message for internal server errors

@@ -1,0 +1,137 @@
+build/
+dist/
+node_modules/
+.secret-*
+*.env
+*.log
+*.xlsx
+
+notebooks/*.env
+mlartifacts/
+mlruns/
+docs/
+.DS_Store
+notebooks/0_initialUseCasePrep.ipynb
+data/sample_postgres_database
+data/semantic_types/*
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+.DS_Store
+.vs/
+
+# Testing
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+preview-agent-code-interpreter.ipynb
+prompt.txt
+
+# Documentation
+docs/_build/
+site/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Distribution / packaging
+dist/
+build/
+*.manifest
+*.spec
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+*.sql
+
+# Environment variables
+.env*
+.secret*
+
+# Local development
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Project specific
+mlruns/
+mlartifacts/
+data/
+models/
+results/
+temp/
+architecture.drawio
+architecture.pptx
+data_engineer_agent_architecture.png
+overview_of_benchmarking.png
+sagemaker_mlflow.png
+mac-setup.png
+
+# Node.js / CDK specific
+cdk.out/
+.cdk.staging/
+cdk-outputs.json
+.npmrc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn-integrity
+.pnp.*
+.pnp.js
+.yarn/
+.yarnrc
+.node_repl_history
+.next/
+.nuxt/
+.serverless/
+.dynamodb/
+coverage/
+jspm_packages/
+.npm

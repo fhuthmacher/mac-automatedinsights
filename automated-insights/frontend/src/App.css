@@ -1,0 +1,145 @@
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Header and Logo area */
+.amplify-card:nth-child(2) {
+  background-color: white;
+  border: none;
+  box-shadow: none;
+  padding: 1rem 2rem;
+}
+
+.amplify-card:nth-child(2) img {
+  height: 35px;
+  margin-right: 1rem;
+}
+
+.amplify-heading {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+/* New Note Button */
+.amplify-card:nth-child(1) {
+  background-color: white;
+  border: none;
+  box-shadow: none;
+  padding: 1rem 2rem;
+}
+
+.amplify-button[variation="primary"] {
+  background-color: #008CA5;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+}
+
+.amplify-button[variation="primary"]:hover {
+  background-color: #006d82;
+}
+
+/* Processed Notes Section */
+.amplify-card:nth-child(3) {
+  background-color: white;
+  border: none;
+  box-shadow: none;
+  padding: 1rem 2rem;
+}
+
+.amplify-heading[level="5"] {
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+/* Table Styling */
+.amplify-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.amplify-tablerow {
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.amplify-tablerow:hover {
+  background-color: #f5f5f5;
+}
+
+.amplify-tablecell {
+  padding: 1rem;
+  text-align: left;
+}
+
+/* Input Field */
+.amplify-textfield input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.75rem;
+  width: 100%;
+}
+
+.amplify-textfield input:focus {
+  border-color: #008CA5;
+  outline: none;
+}
+
+/* Submit Button */
+.amplify-button[type="submit"] {
+  background-color: #008CA5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1rem;
+}
+
+/* Sign Out Button */
+.amplify-button:last-child {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.amplify-button:last-child:hover {
+  background-color: #eee;
+}
+
+/* Grid Layout */
+.amplify-grid {
+  gap: 0;
+  background-color: #f9f9f9;
+}
+
+/* Scrollview */
+.amplify-scrollview {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: white;
+}
+
+/* Delete Button */
+.amplify-button[variation="destructive"] {
+  background-color: transparent;
+  color: #cc0000;
+  border: none;
+  padding: 0.5rem;
+  min-width: auto;
+}
+
+.amplify-button[variation="destructive"]:hover {
+  background-color: #fff0f0;
+}

@@ -1,0 +1,16 @@
+{
+    "scenarios": [
+        {
+            "scenario": "DataPreparation",
+            "input_problem": "Do the data preparation with the following details. Return the final Athena table name and the SQL table definition in the final response. [{\"name\": \"DataLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/uploads/Customers.csv\"}, {\"name\": \"AthenaDatabase\", \"type\": \"string\", \"value\": \"huthmac_automatedinsights\"}]",
+            "assertions": [
+                "agent: GetInformationForSemanticTypeDetection is executed to gather information about the data",
+                "agent: SaveSQLTableDefinition is executed to save the SQL table definition to S3",
+                "agent: CreateAthenaTable is executed to create the Athena table",
+                "agent: QueryData is executed to verify the Athena table creation",
+                "agent: GetDatabaseSchema is executed to get the latest database schema",
+                "agent: SaveERM is executed to save the Entity Relationship Diagram in json format to S3"
+            ]
+        }
+    ]
+}

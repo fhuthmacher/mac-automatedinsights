@@ -1,0 +1,1 @@
+{"root":["./src/api.ts","./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/graphql/mutations.ts","./src/graphql/queries.ts","./src/graphql/subscriptions.ts","./src/screens/discoverscreen.tsx","./src/screens/homescreen.tsx","./src/screens/reviewscreen.tsx","./src/screens/uploadscreen.tsx"],"version":"5.6.2"}

@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  title: DataEngineerAPI
+  version: 1.0.0
+  description: Data Preparation to make data available for AI/ML and Analytics workloads
+
+paths:
+  /GetDatabaseSchema:
+    get:
+      operationId: GetDatabaseSchema
+      summary: Retrieve the SQL database schema from S3
+      description: Gets all SQL table definitions stored in the metadata/sql_table_definition directory
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: SQL table definition statements
+        '400':
+          description: Error response
+
+  /GetERM:
+    get:
+      operationId: GetERM
+      summary: Retrieve the Entity Relationship Diagram in json format
+      description: Gets the Entity Relationship Diagram in json format
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Entity Relationship Diagram in json format
+        '400':
+          description: Error response
+
+  /SaveERM:
+    post:
+      operationId: SaveERM
+      summary: Save the Entity Relationship Diagram in json format to S3
+      description: Saves the Entity Relationship Diagram in json format to S3
+      requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      ERMData:
+                        type: string
+                        description: Entity Relationship Diagram in json format
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Entity Relationship Diagram in json format
+        '400':
+          description: Error response
+
+  /GetInformationForSemanticTypeDetection:
+    post:
+      operationId: GetInformationForSemanticTypeDetection
+      summary: Get information for semantic type detection
+      description: Get information for semantic type detection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the data to analyze
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  column_names:
+                    type: array
+                    items:
+                      type: string
+                  data_sample:
+                    type: object
+        '400':
+          description: Error response
+
+  /SaveSQLTableDefinition:
+    post:
+      operationId: SaveSQLTableDefinition
+      summary: Save SQL table definition
+      description: Saves the SQL table definition to S3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                SQL_Table_Definition:
+                  type: string
+                  description: SQL table definition
+                TableName:
+                  type: string
+                  description: File or table name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data_sample_location:
+                    type: string
+                  data_sample:
+                    type: object
+                  semantic_types:
+                    type: string
+        '400':
+          description: Error response
+
+  /CreateAthenaTable:
+    post:
+      operationId: CreateAthenaTable
+      summary: Create an Athena table based on data and semantic types
+      description: Creates an Athena table with appropriate column definitions based on detected semantic types
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - AthenaDatabase
+                - TableName
+                - Athena_Table_Create_SQL_statement
+                - DataLocation
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the data
+                AthenaDatabase:
+                  type: string
+                  description: The Athena database to create the table in
+                Athena_Table_Create_SQL_statement:
+                  type: string
+                  description: Athena SQL table create statement with LOCATION DataLocation
+                TableName:
+                  type: string
+                  description: Name of the table to create
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  table_name:
+                    type: string
+                  table_location:
+                    type: string
+                  table_definition:
+                    type: string
+                  query_results:
+                    type: object
+        '400':
+          description: Error response
+
+  /QueryData:
+    post:
+      operationId: QueryData
+      summary: Execute SQL query against Athena database
+      description: Runs a SQL query on the specified Athena database and returns the results
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - AthenaDatabase
+                - SQLQuery
+              properties:
+                AthenaDatabase:
+                  type: string
+                  description: The Athena database to query
+                SQLQuery:
+                  type: string
+                  description: SQL query to execute
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  query:
+                    type: string
+                  data:
+                    type: object
+        '400':
+          description: Error response

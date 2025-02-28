@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  title: DataEngineerAPI
+  version: 1.0.0
+  description: Data Preperation to make data available for AI/ML and Analytics workloads
+servers:
+  - url: "https://0uojed4arc.execute-api.us-west-2.amazonaws.com/dev"
+    description: Bedrock IDE Function Example
+paths:
+  /DataPreparation:
+    post:
+      operationId: DataPreparation
+      summary: prepare data for AI/ML and Analytics workloads and make it available as Athena table so that it can be queried
+      description: prepare data for AI/ML and Analytics workloads and make it available as Athena table so that it can be queried
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - AthenaDatabase
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the data that needs to be prepared
+                AthenaDatabase:
+                  type: string
+                  description: The Athena database to create the table in
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  athena_table_name:
+                    type: string
+                  athena_table_location:
+                    type: string
+                  semantic_types:
+                    type: string
+                  sample_query_results:
+                    type: string
+        '400':
+          description: Error response

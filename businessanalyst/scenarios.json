@@ -1,0 +1,15 @@
+{
+    "scenarios": [
+        {
+            "scenario": "DetectUseCases",
+            "input_problem": "Detect AI/ML use cases that can be performed on the data. Include the reasoning and the S3 location of the prepared dataset in the final response. Athena database name: huthmac_automatedinsights",
+            "assertions": [
+                "agent: GetDatabaseSchema is executed to detect AI/ML use cases that can be performed on the data in the Athena database",
+                "agent: GetUseCases is executed to detect AI/ML use cases that can be performed on the data in the Athena database",
+                "agent: ExecuteQuery is executed to create a ML dataset",
+                "agent: SaveDataset is executed to save the ML dataset to S3",
+                "agent: The AI/ML use cases along with the respective S3 location of the ML dataset(s) and target column name are returned in the final response"
+            ]
+        }
+    ]
+}

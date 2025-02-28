@@ -1,0 +1,300 @@
+{
+    "agent_id": "OZ6SPQ0TAM",
+    "agent_alias_id": "BJEOQ2MDBU",
+    "human_id": "User",
+    "agent_name": "DataScientist",
+    "agent_instruction": "ROLE: Expert Data Scientist with AutoML\nCAPABILITIES:\n1) Exploratory data analysis with the ExploratoryDataAnalysis function  \nExploratoryDataAnalysis(\nAPIPath: \"ExploratoryDataAnalysis\"\nDataLocation: [path_to_data]) Returns: { summary: string, description: string, visualizations: object }\n\n2) Create a train test split with the TrainTestSplit function\nTrainTestSplit(\nAPIPath: \"TrainTestSplit\"\nDataLocation: [path_to_data]\nHoldoutFrac: [fraction_of_data_to_holdout_for_testing]\n) Returns: { train_data_location: string, test_data_location: string }\n\n3) Machine learning model training with the Train function\nTrain(\nAPIPath: \"Train\"\nTarget: [target_variable]\nTrainDataLocation: [train_data_location]\nTestDataLocation: [test_data_location]\nModelLocation: [path_to_store_model]\n ) Returns: { model_location: string, accuracy_metrics: object, feature_importance: object }\n\n3) Prediction generation with the Predict function\nPredict(\nAPIPath: \"Predict\"\nDataLocation: [path_to_data]\nModelLocation: [path_to_model] \nResultDataLocation: [path_to_store_predictions_data]) Returns: sample predictions and location of generated predictions\n\nWORKFLOW:\nFirst verify you have received a ML dataset location and target column name. If you only got a SQL query respond that you do not have access to Athena and that you need the dataset to be stored in S3.\nThen use exploratory data analysis to gather more details on the ML dataset\nUse this information to determine the right HoldoutFrac for the ml model training.\nThen use the TrainTestSplit function to split the data into train and test sets.\n\nIf training:\nEnsure that the ModelLocation is constructed in the \"models/\" subdirectory and has a subfolder that indicates the ml use-case, and that the actual filename is \"models.zip\".\nExample ModelLocation: /models/customer_churn/model.zip\nExecute Train() function\nReturn ML model location and ALL feature importance values.\n\nIf predicting:\nEnsure that the ResultDataLocation is constructed in the \"results/\" subdirectory and has a filename that indicates the ml use-case, and has a filename with CSV file extension.\nExample ModelLocation: /models/customer_churn/model.zip\nExecute Predict() function\nReturn sample predictions and predictions dataset location.\n\nERROR HANDLING:\nReport missing or invalid parameters\nAlert insufficient data quality/quantity\nNotify of model compatibility issues\n\nEnsure that any created ML model is stored in the \"models/\" subdirectory, and any generated predictions are stored in the \"results/\" subdirectory.\n",
+    "tools": [
+        {
+            "tool_name": "DataScientistAPI",
+            "name": "DataScientistAPI",
+            "description": "AutoML to train a ML model, use a ML model to make predictions, or get feature importance",
+            "actions": [
+                {
+                    "name": "Train",
+                    "description": "Train a machine learning model",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "Target": {
+                                "data_type": "string",
+                                "title": "Target",
+                                "description": "The target column to predict",
+                                "required": []
+                            },
+                            "DataLocation": {
+                                "data_type": "string",
+                                "title": "DataLocation",
+                                "description": "S3 location of the data to train the model on",
+                                "required": []
+                            },
+                            "ModelLocation": {
+                                "data_type": "string",
+                                "title": "ModelLocation",
+                                "description": "S3 location to store the model",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "Target",
+                            "DataLocation",
+                            "ModelLocation"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "title": "200",
+                        "description": "Successful operation",
+                        "properties": {
+                            "description": {
+                                "data_type": "string",
+                                "required": []
+                            },
+                            "content": {
+                                "data_type": "object",
+                                "properties": {
+                                    "message": {
+                                        "data_type": "string",
+                                        "required": []
+                                    },
+                                    "results": {
+                                        "data_type": "string",
+                                        "required": []
+                                    }
+                                }
+                            }
+                        },
+                        "required": []
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "Predict",
+                    "description": "Make predictions using a trained model",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "Target": {
+                                "data_type": "string",
+                                "title": "Target",
+                                "description": "The target column to predict",
+                                "required": []
+                            },
+                            "DataLocation": {
+                                "data_type": "string",
+                                "title": "DataLocation",
+                                "description": "S3 location of the input data for the prediction",
+                                "required": []
+                            },
+                            "ResultDataLocation": {
+                                "data_type": "string",
+                                "title": "ResultDataLocation",
+                                "description": "S3 location of the output data for the prediction",
+                                "required": []
+                            },
+                            "ModelLocation": {
+                                "data_type": "string",
+                                "title": "ModelLocation",
+                                "description": "S3 location of the trained model that is used for the predictions",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "Target",
+                            "DataLocation",
+                            "ModelLocation",
+                            "ResultDataLocation"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "title": "200",
+                        "description": "Successful operation",
+                        "properties": {
+                            "description": {
+                                "data_type": "string",
+                                "required": []
+                            },
+                            "content": {
+                                "data_type": "object",
+                                "properties": {
+                                    "message": {
+                                        "data_type": "string",
+                                        "required": []
+                                    },
+                                    "results": {
+                                        "data_type": "string",
+                                        "required": []
+                                    }
+                                }
+                            }
+                        },
+                        "required": []
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "FeatureImportance",
+                    "description": "Get feature importance from a trained model",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "Target": {
+                                "data_type": "string",
+                                "title": "Target",
+                                "description": "The target column to predict",
+                                "required": []
+                            },
+                            "DataLocation": {
+                                "data_type": "string",
+                                "title": "DataLocation",
+                                "description": "S3 location of the data",
+                                "required": []
+                            },
+                            "ModelLocation": {
+                                "data_type": "string",
+                                "title": "ModelLocation",
+                                "description": "S3 location of the trained model that is used to get the feature importance",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "Target",
+                            "DataLocation",
+                            "ModelLocation"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "title": "200",
+                        "description": "Successful operation",
+                        "properties": {
+                            "description": {
+                                "data_type": "string",
+                                "required": []
+                            },
+                            "content": {
+                                "data_type": "object",
+                                "properties": {
+                                    "message": {
+                                        "data_type": "string",
+                                        "required": []
+                                    },
+                                    "results": {
+                                        "data_type": "string",
+                                        "required": []
+                                    }
+                                }
+                            }
+                        },
+                        "required": []
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "ExploratoryDataAnalysis",
+                    "description": "Perform exploratory data analysis on a dataset",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "DataLocation": {
+                                "data_type": "string",
+                                "title": "DataLocation",
+                                "description": "S3 location of the data",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "DataLocation"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "title": "200",
+                        "description": "Successful operation",
+                        "properties": {
+                            "description": {
+                                "data_type": "string",
+                                "required": []
+                            },
+                            "content": {
+                                "data_type": "object",
+                                "properties": {
+                                    "message": {
+                                        "data_type": "string",
+                                        "required": []
+                                    },
+                                    "results": {
+                                        "data_type": "string",
+                                        "required": []
+                                    }
+                                }
+                            }
+                        },
+                        "required": []
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "TrainTestSplit",
+                    "description": "Perform train test split on a dataset",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "DataLocation": {
+                                "data_type": "string",
+                                "title": "DataLocation",
+                                "description": "S3 location of the data",
+                                "required": []
+                            },
+                            "HoldoutFrac": {
+                                "data_type": "number",
+                                "title": "HoldoutFrac",
+                                "description": "Fraction of data to hold out for testing",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "DataLocation",
+                            "HoldoutFrac"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "title": "200",
+                        "description": "Successful operation",
+                        "properties": {
+                            "description": {
+                                "data_type": "string",
+                                "required": []
+                            },
+                            "content": {
+                                "data_type": "object",
+                                "properties": {
+                                    "message": {
+                                        "data_type": "string",
+                                        "required": []
+                                    },
+                                    "results": {
+                                        "data_type": "string",
+                                        "required": []
+                                    }
+                                }
+                            }
+                        },
+                        "required": []
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                }
+            ],
+            "tool_type": "Module",
+            "meta": {}
+        }
+    ],
+    "reachable_agents": []
+}

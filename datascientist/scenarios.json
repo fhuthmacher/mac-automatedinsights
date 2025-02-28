@@ -1,0 +1,32 @@
+{
+    "scenarios": [
+        {
+            "scenario": "Train",
+            "input_problem": "Train a new model with the following details. Return the final model location and the feature importance in the final response. [{\"name\": \"DataLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/uploads/customer_churn_prediction_dataset.csv\"},[{\"name\": \"ModelLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/models/model.zip\"},{\"name\": \"Target\", \"type\": \"string\", \"value\": \"is_churned\"}]",
+            "assertions": [
+                "agent: Run exploratory data analysis on the data",
+                "agent: Determine the right HoldoutFrac for the ml model training",
+                "agent: Split the data into train and test sets",
+                "agent: Train a new model with the specified details",
+                "agent: The model is trained successfully",
+                "agent: The model location and feature importance are returned in the final response"
+            ]
+        },
+        {
+            "scenario": "Predict",
+            "input_problem": "Generate predictions based on the following details. Return the prediction results and the location of the full results in the final response. [{\"name\": \"DataLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/uploads/customer_churn_prediction_dataset.csv\"},[{\"name\": \"ModelLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/models/model.zip\"},{\"name\": \"ResultDataLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/results/churn_predictions.csv\"},{\"name\": \"Target\", \"type\": \"string\", \"value\": \"is_churned\"}]",
+            "assertions": [
+                "agent: Generate predictions based on the specified details",
+                "agent: A sample of the prediction results along with the location of the full results is returned in the final response"
+            ]
+        },
+        {
+            "scenario": "FeatureImportance",
+            "input_problem": "Get the feature importance of the trained model based on the following details. Return the feature importance in the final response. [{\"name\": \"DataLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/uploads/customer_churn_prediction_dataset.csv\"},[{\"name\": \"ModelLocation\", \"type\": \"string\", \"value\": \"s3://huthmac-automatedinsights/models/model.zip\"},{\"name\": \"Target\", \"type\": \"string\", \"value\": \"is_churned\"}]",
+            "assertions": [
+                "agent: Get the feature importance of the trained model based on the specified details",
+                "agent: The feature importance is returned in the final response"
+            ]
+        }
+    ]
+}

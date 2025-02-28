@@ -1,0 +1,227 @@
+{
+    "agent_id": "5PIAKQGSNP",
+    "agent_alias_id": "SCVOFLKMJM",
+    "human_id": "User",
+    "agent_name": "DataEngineer",
+    "agent_instruction": "Expert Data Engineer Agent\nYou are an expert data engineer with access to a comprehensive set of data preparation and management tools. Your role is to help users process, analyze, and query data efficiently.\n\nAvailable Tools\nGetDatabaseSchema: Retrieves the current SQL database schema from S3.\nGetERM: Retrieves the Entity Relationship Diagram in JSON format.\nSaveERM: Saves an Entity Relationship Diagram in JSON format to S3.\nGetInformationForSemanticTypeDetection: Analyzes data to help detect semantic types.\nSaveSQLTableDefinition: Saves SQL table definition to S3.\nCreateAthenaTable: Creates an Athena table based on data and Athena table create definition.\nQueryData: Executes SQL queries against Athena databases.\n\nWorkflow\nData Analysis: When presented with new data, use GetInformationForSemanticTypeDetection to analyze the data structure and content. Identify semantic types for each column and 3 ML use cases where these semantic types could be used in.\nTable Schema Definition: Create appropriate SQL table definition with semantic column names based on the data analysis, considering semantic types and appropriate data types. \nTable Creation: Use and adjust the Table Schema Definition with CreateAthenaTable to make the data available for querying.\nData Querying: Verify successful table creation by querying the data using the QueryData tool.\nEntity RelationShip Diagram: use GetDatabaseSchema tool to get the latest SQL schema definition and then generate a new entity relationship diagram and save it with tool SaveERM.\n\nImportant Guidelines\nIf you receive multiple datasets as input, process each one methodically and verify that all files have been processed before providing your final response.\nWhen creating table definitions, include SQL comments that explain the semantic type of each column and its potential use cases.\nFor primary keys, add specific comments explaining the primary key constraint.\nAlways ensure your SQL follows the appropriate format for the target system (ANSI SQL or Athena SQL).\nUse the database schema to provide context-aware recommendations.",
+    "tools": [
+        {
+            "tool_name": "DataEngineerAPI",
+            "name": "DataEngineerAPI",
+            "description": "Data Preparation to make data available for AI/ML and Analytics workloads",
+            "actions": [
+                {
+                    "name": "GetDatabaseSchema",
+                    "description": "Retrieve the SQL database schema from S3",
+                    "output_schema": {
+                        "data_type": "array",
+                        "items": {
+                            "type": "string",
+                            "description": "SQL table definition statements"
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "GetERM",
+                    "description": "Retrieve the Entity Relationship Diagram in json format",
+                    "output_schema": {
+                        "data_type": "array",
+                        "items": {
+                            "type": "string",
+                            "description": "Entity Relationship Diagram in json format"
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "SaveERM",
+                    "description": "Save the Entity Relationship Diagram in json format to S3",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "ERMData": {
+                                "data_type": "string",
+                                "description": "Entity Relationship Diagram in json format"
+                            }
+                        },
+                        "required": [
+                            "ERMData"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "erm_file_location": {
+                                "data_type": "string",
+                                "description": "S3 location where the ERM was saved"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "GetInformationForSemanticTypeDetection",
+                    "description": "Get information for semantic type detection",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "DataLocation": {
+                                "data_type": "string",
+                                "description": "S3 location of the data to analyze"
+                            }
+                        },
+                        "required": [
+                            "DataLocation"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "column_names": {
+                                "data_type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "data_sample": {
+                                "data_type": "object"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "SaveSQLTableDefinition",
+                    "description": "Save SQL table definition to S3",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "SQL_Table_Definition": {
+                                "data_type": "string",
+                                "description": "SQL table definition"
+                            },
+                            "TableName": {
+                                "data_type": "string",
+                                "description": "File or table name"
+                            }
+                        },
+                        "required": [
+                            "SQL_Table_Definition"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "sql_table_definition": {
+                                "data_type": "string"
+                            },
+                            "sql_table_definition_file_location": {
+                                "data_type": "string"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "CreateAthenaTable",
+                    "description": "Create an Athena table based on data and semantic types",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "DataLocation": {
+                                "data_type": "string",
+                                "description": "S3 location of the data"
+                            },
+                            "AthenaDatabase": {
+                                "data_type": "string",
+                                "description": "The Athena database to create the table in"
+                            },
+                            "Athena_Table_Create_SQL_statement": {
+                                "data_type": "string",
+                                "description": "Athena SQL table create statement with LOCATION DataLocation"
+                            },
+                            "TableName": {
+                                "data_type": "string",
+                                "description": "Name of the table to create"
+                            }
+                        },
+                        "required": [
+                            "AthenaDatabase",
+                            "TableName",
+                            "Athena_Table_Create_SQL_statement",
+                            "DataLocation"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "status": {
+                                "data_type": "string"
+                            },
+                            "table_name": {
+                                "data_type": "string"
+                            },
+                            "table_location": {
+                                "data_type": "string"
+                            },
+                            "table_definition": {
+                                "data_type": "string"
+                            },
+                            "query_results": {
+                                "data_type": "object"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "QueryData",
+                    "description": "Execute SQL query against Athena database",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "AthenaDatabase": {
+                                "data_type": "string",
+                                "description": "The Athena database to query"
+                            },
+                            "SQLQuery": {
+                                "data_type": "string",
+                                "description": "SQL query to execute"
+                            }
+                        },
+                        "required": [
+                            "AthenaDatabase",
+                            "SQLQuery"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "status": {
+                                "data_type": "string"
+                            },
+                            "query": {
+                                "data_type": "string"
+                            },
+                            "data": {
+                                "data_type": "object"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                }
+            ],
+            "tool_type": "Module",
+            "meta": {}
+        }
+    ],
+    "reachable_agents": []
+}

@@ -1,0 +1,205 @@
+{
+    "agent_id": "TINKFIRY9E",
+    "agent_alias_id": "3ES9DC2VGX",
+    "human_id": "User",
+    "agent_name": "BusinessAnalyst",
+    "agent_instruction": "You are an expert business analyst. \nYou have access to a set of tools to review SQL database schema, run SQL queries against the Athena database, and go through a list of ML use cases and determine whether the AI/ML use case can be performed on the data. \nIdentify one high-value use cases focusing on classification and regression ML problem statements.\nFor each viable AI/ML use case you have identified, provide a comprehensive analysis that includes:\n- ML Use Case Name\n- Description\n- Business Justification\n- Target Column Specification (e.g. for in customer churn example a customer that has been inactive for 6months)\n- ML dataset location\n- Athena SQL query that successfully generated the ML dataset that includes the target column\n\nExecute the generated Athena SQL query and ensure that it is valid SQL that can be executed in Amazon Athena. \nIf you encounter any errors, review the Athena error message and correct the SQL query accordingly. \nIf you cannot resolve the Athena error after 3 attempts, eliminate the ML use case and continue with the other use cases.\n\nBefore your final response, pause and verify that your final response includes the ML dataset location.",
+    "tools": [
+        {
+            "tool_name": "BusinessAnalystAPI",
+            "name": "BusinessAnalystAPI",
+            "description": "Business Analyst API for database analysis and ML dataset preparation",
+            "actions": [
+                {
+                    "name": "GetDatabaseSchema",
+                    "description": "Retrieve the SQL database schema from S3",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "AthenaDatabase": {
+                                "data_type": "string",
+                                "description": "The Athena database name",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "AthenaDatabase"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "array",
+                        "items": {
+                            "data_type": "object",
+                            "properties": {
+                                "table_name": {
+                                    "data_type": "string"
+                                },
+                                "columns": {
+                                    "data_type": "array",
+                                    "items": {
+                                        "data_type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "data_type": "string"
+                                            },
+                                            "type": {
+                                                "data_type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "GetUseCases",
+                    "description": "Retrieve available AI/ML use cases from S3",
+                    "output_schema": {
+                        "data_type": "array",
+                        "items": {
+                            "data_type": "object",
+                            "properties": {
+                                "name": {
+                                    "data_type": "string",
+                                    "description": "Name of the use case"
+                                },
+                                "description": {
+                                    "data_type": "string",
+                                    "description": "Detailed description of the use case"
+                                },
+                                "required_columns": {
+                                    "data_type": "array",
+                                    "items": {
+                                        "data_type": "string"
+                                    },
+                                    "description": "Required columns for this use case"
+                                }
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "ExecuteQuery",
+                    "description": "Execute an Athena query, save results, and return samples",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "AthenaDatabase": {
+                                "data_type": "string",
+                                "description": "The Athena database name",
+                                "required": []
+                            },
+                            "Query": {
+                                "data_type": "string",
+                                "description": "The SQL query to execute",
+                                "required": []
+                            },
+                            "UseCaseName": {
+                                "data_type": "string",
+                                "description": "Optional use case name to save full results",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "AthenaDatabase",
+                            "Query"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "status": {
+                                "data_type": "string",
+                                "enum": [
+                                    "SUCCEEDED",
+                                    "FAILED",
+                                    "CANCELLED",
+                                    "ERROR"
+                                ]
+                            },
+                            "total_rows": {
+                                "data_type": "integer",
+                                "description": "Total number of rows in the full result"
+                            },
+                            "total_columns": {
+                                "data_type": "integer",
+                                "description": "Total number of columns"
+                            },
+                            "columns": {
+                                "data_type": "array",
+                                "items": {
+                                    "data_type": "string"
+                                },
+                                "description": "List of column names"
+                            },
+                            "sample_data": {
+                                "data_type": "array",
+                                "items": {
+                                    "data_type": "object",
+                                    "additionalProperties": true
+                                },
+                                "description": "Sample rows from the query results"
+                            },
+                            "dataset_location": {
+                                "data_type": "string",
+                                "description": "S3 location of saved dataset (if use case provided)"
+                            },
+                            "error": {
+                                "data_type": "string",
+                                "description": "Detailed error message if query failed"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                },
+                {
+                    "name": "SaveDataset",
+                    "description": "Save a dataset to S3",
+                    "input_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "UseCaseName": {
+                                "data_type": "string",
+                                "description": "Name of the use case for the dataset",
+                                "required": []
+                            },
+                            "Data": {
+                                "data_type": "array",
+                                "items": {
+                                    "data_type": "object",
+                                    "additionalProperties": true
+                                },
+                                "description": "Dataset to save as array of records",
+                                "required": []
+                            }
+                        },
+                        "required": [
+                            "UseCaseName",
+                            "Data"
+                        ]
+                    },
+                    "output_schema": {
+                        "data_type": "object",
+                        "properties": {
+                            "location": {
+                                "data_type": "string",
+                                "description": "S3 location where the dataset was saved"
+                            }
+                        }
+                    },
+                    "requires_confirmation": false,
+                    "meta": {}
+                }
+            ],
+            "tool_type": "Module",
+            "meta": {}
+        }
+    ],
+    "reachable_agents": []
+}

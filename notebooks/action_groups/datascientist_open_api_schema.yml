@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  title: DataScientistAPI
+  version: 1.0.0
+  description: AutoML to train a ML model, use a ML model to make predictions, or get feature importance
+
+paths:
+  /Train:
+    post:
+      operationId: trainModel
+      summary: Train a machine learning model
+      description: Train a machine learning model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Target
+                - ModelLocation
+                - TrainDataLocation
+                - TestDataLocation
+              properties:
+                TrainDataLocation:
+                  type: string
+                  description: S3 location of the training data
+                TestDataLocation:
+                  type: string
+                  description: S3 location of the testing data
+                Target:
+                  type: string
+                  description: The target column to predict
+                ModelLocation:
+                  type: string
+                  description: S3 location to store the model
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  results:
+                    type: string
+
+        '400':
+          description: Error response
+
+  /Predict:
+    post:
+      operationId: predictModel
+      summary: Make predictions using a trained model
+      description: Make predictions using a trained model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Target
+                - ModelLocation
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the input data for the prediction
+                Target:
+                  type: string
+                  description: The target column to predict
+                ModelLocation:
+                  type: string
+                  description: S3 location to store the model
+                ResultDataLocation:
+                  type: string
+                  description: S3 location of the output data for the prediction
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  results:
+                    type: string
+        '400':
+          description: Error response
+
+  /FeatureImportance:
+    post:
+      operationId: getFeatureImportance
+      summary: Get feature importance from a trained model
+      description: Get feature importance from a trained model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ModelLocation
+                - DataLocation
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the data
+                ModelLocation:
+                  type: string
+                  description: S3 location to store the model
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  results:
+                    type: string
+
+        '400':
+          description: Error response
+
+  /ExploratoryDataAnalysis:
+    post:
+      operationId: exploratoryDataAnalysis
+      summary: Perform exploratory data analysis on a dataset
+      description: Perform exploratory data analysis on a dataset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - DataLocation
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the data
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  results:
+                    type: string
+
+        '400':
+          description: Error response  
+
+  /TrainTestSplit:
+    post:
+      operationId: trainTestSplit
+      summary: Perform train test split on a dataset
+      description: Perform train test split on a dataset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - DataLocation
+                - HoldoutFrac
+                - Target
+              properties:
+                DataLocation:
+                  type: string
+                  description: S3 location of the data
+                HoldoutFrac:
+                  type: number
+                  description: Fraction of data to hold out for testing
+                Target:
+                  type: string
+                  description: The target column to predict
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  results:
+                    type: string
+
+        '400':
+          description: Error response
